@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
-import { TelegrafModule } from 'nestjs-telegraf';
-import { TelegramUpdate } from './telegram.update';
-import { NocoDBService } from '../database/nocodb.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { UserService } from './account/user.service';
-import { AdminService } from './account/admin.service';
-import { ExchangeModule } from './services/exchange/exchange.module';
-import { ExchangeDBModule } from '../database/services/exchange/exchange.module';
+import { TelegrafModule } from 'nestjs-telegraf';
 import { session } from 'telegraf';
+
+import { TelegramUpdate } from './telegram.update';
+import { TelegramService } from './telegram.service';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   imports: [
     ConfigModule,
+    DatabaseModule,
     TelegrafModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -25,10 +24,8 @@ import { session } from 'telegraf';
       }),
       inject: [ConfigService],
     }),
-    ExchangeModule,
-    ExchangeDBModule,
   ],
-  providers: [TelegramUpdate, NocoDBService, UserService, AdminService],
-  exports: [TelegramUpdate],
+  providers: [TelegramUpdate, TelegramService],
+  exports: [TelegramUpdate, TelegramService],
 })
 export class TelegramModule {}

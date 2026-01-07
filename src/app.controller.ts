@@ -28,6 +28,8 @@ export class AppController {
     @Body() body: any,
     @Res() res: Response,
   ) {
+    console.log('Received webhook:', JSON.stringify(body, null, 2));
+    console.log('Event type:', body?.event);
     if (!apiKey) {
       console.log('Access denied: API key is missing');
       return res.status(HttpStatus.FORBIDDEN).json({

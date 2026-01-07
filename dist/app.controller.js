@@ -24,6 +24,8 @@ let AppController = class AppController {
         this.dataBotService = dataBotService;
     }
     async handleWebhook(apiKey, body, res) {
+        console.log('Received webhook:', JSON.stringify(body, null, 2));
+        console.log('Event type:', body?.event);
         if (!apiKey) {
             console.log('Access denied: API key is missing');
             return res.status(common_1.HttpStatus.FORBIDDEN).json({

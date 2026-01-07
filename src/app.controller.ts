@@ -28,10 +28,7 @@ export class AppController {
     @Body() body: any,
     @Res() res: Response,
   ) {
-    console.log('Received webhook:', JSON.stringify(body, null, 2));
-    console.log('Event type:', body?.event);
     if (!apiKey) {
-      console.log('Access denied: API key is missing');
       return res.status(HttpStatus.FORBIDDEN).json({
         error: 'Access denied: API key is missing',
       });
@@ -39,7 +36,6 @@ export class AppController {
 
     const isValidKey = await this.dataBotService.validateAPIKey(apiKey);
     if (!isValidKey) {
-      console.log('Access denied: Invalid API key');
       return res.status(HttpStatus.FORBIDDEN).json({
         error: 'Access denied: Invalid API key',
       });
@@ -63,7 +59,6 @@ export class AppController {
           publish: publishResult,
         });
       } catch (error) {
-        console.error('Error processing currency update:', error);
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
           error: 'Failed to process currency update',
           message: error.message,

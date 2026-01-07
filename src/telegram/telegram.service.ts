@@ -1,28 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectBot } from 'nestjs-telegraf';
 import { Telegraf } from 'telegraf';
-import { marked } from 'marked';
 
 @Injectable()
 export class TelegramService {
-  constructor(@InjectBot() private readonly bot: Telegraf) {
-    marked.setOptions({
-      gfm: true,
-    });
-  }
-
-  private async convertMarkdownToHtml(markdown: string): Promise<string> {
-    const html = await marked.parse(markdown, { gfm: true });
-    return (
-      String(html)
-        .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/<p>/g, '')
-        .replace(/<\/p>/g, '\n')
-        // .replace(/<h[1-6]>/g, '<b>')
-        // .replace(/<\/h[1-6]>/g, '</b>\n')
-        .trim()
-    );
-  }
+  constructor(@InjectBot() private readonly bot: Telegraf) {}
 
   private replaceTemplateVariables(
     template: string,
@@ -106,7 +88,11 @@ export class TelegramService {
           continue;
         }
 
-        message = await this.convertMarkdownToHtml(message);
+        message = String(message)
+          .replace(/<p>/g, '')
+          .replace(/<\/p>/g, '\n')
+          .replace(/<br\s*\/?>/gi, '\n')
+          .trim();
 
         const chatId = this.formatChatId(resource);
         console.log(

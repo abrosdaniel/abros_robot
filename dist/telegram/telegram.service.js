@@ -16,21 +16,9 @@ exports.TelegramService = void 0;
 const common_1 = require("@nestjs/common");
 const nestjs_telegraf_1 = require("nestjs-telegraf");
 const telegraf_1 = require("telegraf");
-const marked_1 = require("marked");
 let TelegramService = class TelegramService {
     constructor(bot) {
         this.bot = bot;
-        marked_1.marked.setOptions({
-            gfm: true,
-        });
-    }
-    async convertMarkdownToHtml(markdown) {
-        const html = await marked_1.marked.parse(markdown, { gfm: true });
-        return (String(html)
-            .replace(/<br\s*\/?>/gi, '\n')
-            .replace(/<p>/g, '')
-            .replace(/<\/p>/g, '\n')
-            .trim());
     }
     replaceTemplateVariables(template, currencies) {
         let result = template;
@@ -85,7 +73,11 @@ let TelegramService = class TelegramService {
                     });
                     continue;
                 }
-                message = await this.convertMarkdownToHtml(message);
+                message = String(message)
+                    .replace(/<p>/g, '')
+                    .replace(/<\/p>/g, '\n')
+                    .replace(/<br\s*\/?>/gi, '\n')
+                    .trim();
                 const chatId = this.formatChatId(resource);
                 console.log(`[TelegramService] Sending to chat_id: ${chatId} (original: ${resource.id}, type: ${resource.type})`);
                 try {
